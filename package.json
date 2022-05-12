@@ -6,10 +6,19 @@
   "scripts": {
     "start": "lite-server"
   },
+  "type": "module",
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/jest": "^27.5.1",
+    "@types/uuid": "^8.3.4",
+    "jest": "^28.1.0",
     "lite-server": "^2.6.1",
-    "typescript": "^4.6.4"
+    "ts-jest": "^28.0.2",
+    "typescript": "^4.6.4",
+    "webpack": "^5.72.1"
+  },
+  "dependencies": {
+    "uuid": "^8.3.2"
   }
 }

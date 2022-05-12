@@ -5,7 +5,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var Logging_1, Person_1, PolicyCalculations_1;
+var Logging_1, Person_1;
+const { v4: uuidv4 } = require('uuid');
 console.info("%c scratch.ts", style);
 var Result;
 (function (Result) {
@@ -46,10 +47,7 @@ class Singleton {
             Singleton._initialized = true;
             Singleton._instance = new type(this._initialized);
         }
-        let instance = Singleton._instance;
-        Singleton._instance = undefined;
-        Singleton._initialized = false;
-        return instance;
+        return Singleton._instance;
     }
 }
 let Logging = Logging_1 = class Logging {
@@ -108,7 +106,7 @@ class Utility {
         return age;
     }
     static genPolicyNum() {
-        return +(new Date());
+        return uuidv4();
     }
     static convertToDate(date) {
         let ndate = date.split('/');
@@ -119,7 +117,7 @@ class Utility {
 function Init() {
     return (ctor) => {
         let obj = new ctor(true);
-        console.info(`Initializing... "${obj.constructor.name}"`);
+        console.info(`Initializing... "${obj.constructor.name}: ${obj.name}"`);
     };
 }
 function PageStatus(step, data, initialized) {
@@ -146,7 +144,7 @@ let Person = Person_1 = class Person {
             return this.instance;
         }
         Person_1.instanceName = +(new Date());
-        Person_1.init = (this.instance) ? true : false;
+        Person_1.init = (this.instance);
         return this.instance = Singleton.getInstance(Person_1);
     }
     printPersonName() {
@@ -178,42 +176,32 @@ class Client {
         }
     }
     setRole(roles) {
-        this.roles = roles;
+        var _a;
+        (_a = this.roles) === null || _a === void 0 ? void 0 : _a.push(...roles);
     }
 }
 class Policy {
     constructor(baseCoverage, insured, policyNum, premium) {
         this.baseCoverage = baseCoverage;
         this.insured = insured;
-        this.policyNum = policyNum !== null && policyNum !== void 0 ? policyNum : Utility.genPolicyNum().toString();
+        this.policyNum = policyNum !== null && policyNum !== void 0 ? policyNum : Utility.genPolicyNum();
     }
     policyPremium(policy, client) {
-        let calculate = PolicyCalculations.getInstance(true);
-        policy.premium = calculate.calculatePremium(policy.baseCoverage, client.age);
+        this.calculation = new PolicyCalculations(policy, client);
+        this.calculation.calculatePremium();
     }
 }
-let PolicyCalculations = PolicyCalculations_1 = class PolicyCalculations {
-    constructor(init) {
+class PolicyCalculations {
+    constructor(policy, insured) {
         this.MARGIN = 0.40;
         this.EXPENSES = 0.21;
-        PolicyCalculations_1.instance = PolicyCalculations_1.getInstance(init);
+        this.policy = policy;
+        this.insured = insured;
     }
-    static getInstance(init) {
-        if (this.instance) {
-            PolicyCalculations_1.init = init;
-            return this.instance;
-        }
-        PolicyCalculations_1.instanceName = +(new Date());
-        PolicyCalculations_1.init = (this.instance);
-        return this.instance = Singleton.getInstance(PolicyCalculations_1);
+    calculatePremium() {
+        this.policy.premium = this.policy.baseCoverage * (1 - this.MARGIN) / (this.insured.age * this.EXPENSES);
     }
-    calculatePremium(baseCoverage, age) {
-        return baseCoverage * (1 - this.MARGIN) / (age * this.EXPENSES);
-    }
-};
-PolicyCalculations = PolicyCalculations_1 = __decorate([
-    Init()
-], PolicyCalculations);
+}
 class PolicyBuilder {
     buildClient(name, lastname, dob, address, phone) {
         this.client = new Client(name, lastname, dob, address, phone);
@@ -240,16 +228,13 @@ class PolicyBuilder {
                 }
             }
         }
-        this.client.roles = this.roles = roles;
+        this.roles = roles;
         return this;
     }
     buildPolicy(baseCoverage, insured, policyNum, premium) {
         var _a;
-        if (((_a = this.client) === null || _a === void 0 ? void 0 : _a.roles) && this.client.roles.some(role => role[0] === Role.INSURED)) {
+        if (((_a = this.client) === null || _a === void 0 ? void 0 : _a.roles) && this.client.roles.some(role => role === Role.INSURED)) {
             this.policy = new Policy(baseCoverage, this.client);
-            if (!premium) {
-                this.policy.policyPremium(this.policy, this.client);
-            }
             return this;
         }
         else {
@@ -265,9 +250,9 @@ class PolicyBuilder {
 }
 console.info('Starting Builder Pattern: Policy Builder');
 let policyBuild = new PolicyBuilder().buildClient('John', 'Doe', '10/15/1974', '741 north ave, Vermont, CA 90172', '2129740118')
-    .buildRoles([[Role.OWNER, true], [Role.INSURED, true]])
-    .buildPolicy(100000)
+    .buildRoles([[Role.OWNER, true]])
+    .buildPolicy()
+    .policyPremium()
     .finalPolicy();
 console.info(policyBuild);
-console.info(`Using builder pattern: ${JSON.stringify(policyBuild)}`);
 //# sourceMappingURL=scratch.js.map
