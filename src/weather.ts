@@ -21,6 +21,7 @@
         - Local residents (volunteers)
     3. Get a report of all damages: total individuals, properties and refuggees by location (city, state).
 */
+console.info("%c weather.ts", style);
 enum DisasterGroup {
     Geophysical = "Geophysical",
     Meteorological = "Meteorological",

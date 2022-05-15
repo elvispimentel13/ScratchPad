@@ -1,3 +1,5 @@
+console.info("%c scribble.ts", style);
+
 // TESTING GENERICS
 class Device {
     storage: number;

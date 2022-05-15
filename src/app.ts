@@ -1,4 +1,6 @@
 // JUST PLAYING WITH SOME CODING PRACTICES
+const style = 'color:gray; font-size:15px; font-weight: bold; -webkit-text-stroke: 1px black;'
+console.info("%c app.ts", style);
 const btn = document.querySelector("button")!;
 var evento;
 btn.addEventListener('click', evnt => evento = evnt);

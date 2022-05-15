@@ -1,3 +1,4 @@
+console.info("%c practice.ts", style);
 class Dealership {
     private readonly _dealership: string;
     protected _owner: string = '';
