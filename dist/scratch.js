@@ -14,27 +14,6 @@ var Result;
 })(Result || (Result = {}));
 ;
 class Logger {
-    registerLog(log) {
-        throw new Error("Method not implemented.");
-    }
-    getLogs() {
-        throw new Error("Method not implemented.");
-    }
-    getLogById(id) {
-        throw new Error("Method not implemented.");
-    }
-    getLogsByType(type) {
-        throw new Error("Method not implemented.");
-    }
-    deleteLogById(id) {
-        throw new Error("Method not implemented.");
-    }
-    deleteLogsByType(type, maxQty) {
-        throw new Error("Method not implemented.");
-    }
-    clearLogs(waitResult) {
-        throw new Error("Method not implemented.");
-    }
 }
 class Singleton {
     constructor() {
@@ -134,6 +113,8 @@ function PageStatus(step, data, initialized) {
     };
 }
 function LogToMethods(_, method, props) {
+    console.info(`Method: ${method} props: ${JSON.stringify(props)}`);
+    console.info(props);
 }
 let Person = Person_1 = class Person {
     constructor(init) {
@@ -211,6 +192,9 @@ let PolicyCalculations = PolicyCalculations_1 = class PolicyCalculations {
         return baseCoverage * (1 - this.MARGIN) / (age * this.EXPENSES);
     }
 };
+__decorate([
+    LogToMethods
+], PolicyCalculations.prototype, "calculatePremium", null);
 PolicyCalculations = PolicyCalculations_1 = __decorate([
     Init()
 ], PolicyCalculations);
@@ -270,4 +254,89 @@ let policyBuild = new PolicyBuilder().buildClient('John', 'Doe', '10/15/1974', '
     .finalPolicy();
 console.info(policyBuild);
 console.info(`Using builder pattern: ${JSON.stringify(policyBuild)}`);
+function updateToDo(todo, toUpdate) {
+    return Object.assign(Object.assign({}, todo), toUpdate);
+}
+let objTodo = {};
+objTodo['title'] = 'Bedroom';
+const todo1 = { title: 'Desk', description: 'Clear' };
+const todo2 = updateToDo(todo1, { title: 'Kitchen' });
+objTodo = updateToDo(objTodo, { description: 'Paint' });
+console.info(todo2, objTodo);
+let ToDoImplementation = class ToDoImplementation {
+    constructor(title, description, activity) {
+        this.title = title;
+        this.description = description;
+        this.activity = activity;
+    }
+};
+ToDoImplementation = __decorate([
+    constructorChanger()
+], ToDoImplementation);
+let readOnlyCar = { title: 'car', description: 'electric' };
+const requiredCar = { title: 'truck', description: 'pickup', activity: 'drive' };
+const roCarUdt = updateToDo(readOnlyCar, { title: 'plane', description: 'commercial', activity: 'fly' });
+console.info(roCarUdt);
+console.info('>>' + Object.isFrozen(readOnlyCar) + ': is not a frozen object. Was modified with updateToDo functions with returns a new object reference.');
+const movilityToDo = {
+    cars: { title: 'tesla', description: 'model y' },
+    plane: { title: 'boeing', description: 'a320' },
+    truck: { title: 'tesla', description: 'cybertruck' },
+};
+console.info(`Record<Movility, ToDo>: ${JSON.stringify(movilityToDo)}`);
+const mobilityROReqRec = {
+    cars: { title: 'tesla', description: 'model y', activity: 'drive' },
+    plane: { title: 'boeing', description: '737', activity: 'fly' },
+    truck: { title: 'tesla', description: 'cybertruck', activity: 'load' }
+};
+mobilityROReqRec.cars['activity'] = 'crash';
+console.info(`Record<Movility, Required<ToDoImplementation>>: ${JSON.stringify(mobilityROReqRec)}`);
+const movPart2 = {
+    plane: { title: 'audi', activity: 'luxury' },
+    cars: { title: 'tesla', activity: 'autopilot' }
+};
+console.info(`Record<Exclude<Movility, 'truck'>, Required<Pick<ToDoImplementation, 'title' | 'activity'>>>: ${JSON.stringify(movPart2)}`);
+const driveOnly = {
+    truck: 'Ford - F150',
+    plane: 'Airbus A320'
+};
+console.info(`Omit<MovilitySub, 'cars'>: ${JSON.stringify(driveOnly)}`);
+let ctorArgsTp;
+ctorArgsTp = ['airbus', 'a360', 'landing'];
+console.info('ConstructorParameters<typeof ToDoImplementation>: ' + ctorArgsTp + ': these vals are set to a tuple from >>[title: string, description: string, activity: string]');
+let usingCtorArgs = new ToDoImplementation(...ctorArgsTp);
+console.info('Creating new() insntance of ToDoImplementation with parameters in a variable of type ConstructorParameters<typeof ToDoImplementation>: ' + JSON.stringify(usingCtorArgs));
+let paramsUdtToDo;
+paramsUdtToDo = [todo1, { title: 'changing' }];
+let arrowFnParams;
+arrowFnParams = [];
+function constructorChanger() {
+    return (constructor) => {
+        return class extends constructor {
+            constructor(...args) {
+                super(...args);
+                this.propAdded = 'My Property!';
+                console.info('Printing consctructor args...');
+                console.info('Parameters:' + args);
+            }
+        };
+    };
+}
+let todoObj = new ToDoImplementation('Testing', 'Decorators', 'n/a');
+function sealed(ctor) {
+    Object.seal(ctor);
+    Object.seal(ctor.prototype);
+}
+let testSealed = class testSealed {
+    constructor(t, desc) {
+        this.type = 'Sealed';
+        this.title = t;
+        this.description = desc;
+    }
+};
+testSealed = __decorate([
+    constructorChanger(),
+    sealed
+], testSealed);
+let ctorSealed = new testSealed('is Sealed?', 'Multiple decorators');
 //# sourceMappingURL=scratch.js.map
